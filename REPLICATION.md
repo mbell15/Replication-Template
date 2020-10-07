@@ -1,4 +1,4 @@
-# [MC number] [Manuscript Title] Validation and Replication results
+# [DOI:10.1086/694616] [Who Migrates and Why? Evidence from Italian Administrative Data.] Validation and Replication results
 
 > INSTRUCTIONS: Once you've read these instructions, DELETE THESE AND SIMILAR LINES.
 > In the above title, replace [Manuscript Title] with the actual title of the paper, and [MC number] with the Manuscript Central number (e.g., AEJPol-2017-0097)
@@ -12,6 +12,7 @@ SUMMARY
 -------
 
 > INSTRUCTION: The Data Editor will fill this part out. It will be based on any [REQUIRED] and [SUGGESTED] action items that the report makes a note of. 
+>**No README file summarizing the actions that should be taken was included. The data file along with the code file were just given.** 
 
 > INSTRUCTION: ALWAYS do "Data description", "Code description". If data is present, ALWAYS do "Data checks". If time is sufficient (initial assessment!), do "Replication steps", if not, explain why not.
 
@@ -22,11 +23,14 @@ Data description
 
 > INSTRUCTIONS: Identify all INPUT data sources. Create a list (and commit the list together with this report) (not needed if filling out the "Data Citation and Information report"). For each data source, list in THIS document presence or absence of source, codebook/information on the data, and summary statistics. Summary statistics and codebook may not be necessary if they are available for public use data. In all cases, if the author of the article points to an online location for such information, that is OK. Check for data citation. IN THIS DOCUMENT, point out only a summary of shortcomings.
 
-#### Example data
+#### Work Histories Italian Panel data
 
-- Data is not provided, but a link is provided in the README
-- Access conditions are not described. It turns out, the website requires registration and payment of a fee
-- The data is not cited in the paper nor in the README.
+- Data source was not provided, only the analysis data file.
+- However, you can see about the original data source [here](http://www.laboratoriorevelli.it/whip/whip_datahouse.php?lingua=ita&pagina=dati), note that language is in Italian, which makes it harder to understand if you do not know how to speak italian. But the data is still retreivable.
+- No information on the data was provided. That is, no README file about the data.
+- There are however, two poorly commented STATA codes that are included in a .zip file in [this link](https://www-journals-uchicago-edu.proxy-remote.galib.uga.edu/doi/suppl/10.1086/694616). 
+- This data is however public and easy to access as seen by the previous points.
+- Summary/ descriptive statistics are provided in the paper and how to provide the necessary tables are present in the STATA code.
 
 ### Analysis Data Files
 
@@ -40,6 +44,7 @@ Data description
 > > find . -name \*.dta
 > will list all Stata datasets. Replace `dta` with `.Rdata` or any other extension to find other datafiles.
 
+
 Example:
 
 ```
@@ -48,6 +53,9 @@ Example:
 ./Output_Empirical/data/census_shp/state_coord.dta
 ./Output_Empirical/data/census_shp/state_db.dta
 ```
+- Who Migrates and Why - April 2017.dta
+
+>**The final sample is what is produced from the code, which will have to be run in order to attain it.**
 
 Data deposit
 ------------
@@ -63,6 +71,8 @@ Data deposit
 - [ ] Title conforms to guidance (starts with "Data and Code for:" or "Code for:", is properly capitalized)
 - [ ] Authors (with affiliations) are listed in the same order as on the paper
 
+> **The authors did not provide any of the above materials.**
+
 > INSTRUCTIONS: If any of the above are NOT checked, leave the related [REQUIRED] element here. Otherwise, delete the line.
 
 > [REQUIRED] Please ensure that a ASCII (txt), Markdown (md), or PDF version of the README are available in the data and code deposit.
@@ -73,21 +83,32 @@ Data deposit
 
 > [REQUIRED] Please review authors and affiliations on the openICPSR deposit. In general, they are the same, and in the same order, as for the manuscript; however, authors can deviate from that order.
 
+> **The authors also did not provide any of these materials.**
 
 ### Deposit Metadata
 
 > INSTRUCTIONS: Some of these are specific to openICPSR (JEL, Manuscript Number). Others may or may not be present at other trusted repositories (Dataverse, Zenodo, etc.). Verify all items for openICPSR, check with supervisor for other deposits.
 
 - [ ] JEL Classification (required)
+  + Did not specify the JEL Classification, but given the paper, we can assume that it follows under the **Labor, and Demographic Economics system (J)** and the final classification would be under, **Mobility, Unemployment, Vacancies, and Immigrant Workers (J6)** and finally underneath **Geographic Labor Mobility; Immigrant Workers (J610)**  which retreived from [here](https://www.aeaweb.org/jel/guide/jel.php)
 - [ ] Manuscript Number (required)
+  + DOI:10.1086/694616
 - [ ] Subject Terms (highly recommended)
+  + Brain Drain, Expatriates, Geographic Mobility, Guestworker, Immigrant, Immigrant Labor, Immobility, International Migration, Labor Migration, Labor Mobility, Migrant Workers, Mobility, Out Migration
 - [ ] Geographic coverage (highly recommended)
+  + Data should consist of all individuals who have worked in Italy
 - [ ] Time period(s) (highly recommended)
+  + Including workers from Italy from 1985 to 2004
 - [ ] Collection date(s) (suggested)
+  + Not specified.
 - [ ] Universe (suggested)
+  + Not specified
 - [ ] Data Type(s) (suggested)
+  + STATA .dta
 - [ ] Data Source (suggested)
+  + Not stated in the manuscript, but given the [WHIP website stated above](http://www.laboratoriorevelli.it/whip/whip_datahouse.php?lingua=ita&pagina=dati), weknow that it comes in the form of _comma separated values_ .csv file.
 - [ ] Units of Observation (suggested)
+  + 1,447,312 units with 22,685 in final sample.
 
 > INSTRUCTIONS: Go through the checklist above, and then choose ONE of the following results:
 
@@ -102,6 +123,7 @@ and/or
 - [SUGGESTED] We suggest you update the openICPSR metadata fields marked as (suggested), in order to improve findability of your data and code supplement. 
 
 For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
+> **I would recommend both the last [REQUIRED] and [SUGGESTED] sections.**
 
 Data checks
 -----------
@@ -109,7 +131,9 @@ Data checks
 > INSTRUCTIONS: When data are present, run checks:
 > - can data be read (using software indicated by author)?
 > - Is data in archive-ready formats (CSV, TXT) or in custom formats (DTA, SAS7BDAT, Rdata)? Note: Numbers and Mathematica data files are not considered archive-safe and cannot be accepted. 
+    + In custom formats
 > - Does the data have variable labels (Stata: run `describe using (name of DTA)` and check that there is content in the column "variable label")?
+    + Yes it has variable labels
 > - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results. Note: this check will have lots of false positives - fields it thinks might be sensitive that are not, in fact, sensitive. Apply judgement.
 
 
