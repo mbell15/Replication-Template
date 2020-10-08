@@ -341,13 +341,11 @@ Stated Requirements
 
 - [ ] No requirements specified
 - [ ] Software Requirements specified as follows:
-  - Software 1
-  - Software 2
+  - STATA
 - [ ] Computational Requirements specified as follows:
-  - Cluster size, etc.
+  - N/A
 - [ ] Time Requirements specified as follows:
-  - Length of necessary computation (hours, weeks, etc.)
-
+ 
 - [ ] Requirements are complete.
 
 > If easier, simply copy-and-paste the authors' stated requirements here:
@@ -368,7 +366,7 @@ Actual Requirements, if different
 - [ ] Computational Requirements specified as follows:
   - Cluster size, etc.
 - [ ] Time Requirements 
-  - Length of necessary computation (hours, weeks, etc.)
+  - Length of necessary computation required was not stated, but given that you have to sort out to get the final data sample, this might take a longer time than usual.
 
 > [REQUIRED] Please amend README to contain complete requirements. 
 
@@ -383,16 +381,11 @@ Computing Environment of the Replicator
 > - (Mac) Apple-menu > "About this Mac"
 > - (Linux) see code in `tools/linux-system-info.sh`
 
-- Mac Laptop, MacOS 10.14.6, 8 GB of memory
-- CISER Shared Windows Server 2019, 256GB, Intel Xeon E5-4669 v3 @ 2.10Ghz (3 processors)
-- CISER Virtual Windows Server 2016, 16GB, Intel Haswell 2.19 Ghz (2 processors)
-- BioHPC Linux server, Centos 7.6, 64 cores; 1024GB RAM; 
+- Windows Laptop, Ubuntu 18.04, Intel core i7, 8 GB of RAM
 
 > INSTRUCTIONS: Please also list the software you used (specific versions). List only the ones you used, add any not listed in the examples:
 
-- Stata/MP 16.1
-- Matlab R2019a
-- Intel Compiler 3.14152
+- Stata/SE-64 16.1 via Amazon AWS
 
 Replication steps
 -----------------
@@ -404,8 +397,10 @@ Replication steps
 
 Example:
 
-1. Downloaded code from URL provided.
-2. Downloaded data from URL indicated in the README. A sign-up was required (not indicated in README)
+1. Downloaded code and data from [ here ](https://www-journals-uchicago-edu.proxy-remote.galib.uga.edu/doi/suppl/10.1086/694616).
+2. Made changes to the directory used and then changed the name of the original data to fit the title of the .dta file that was uploaded.
+3. Created a log file to show how the code is run.
+> **STOPPED HERE AS RUN TIME IS TAKING A LONG TIME.**
 3. Added the config.do generating system information, but commented out log creation, as author already creates log files.
 4. Ran code as per README, but the third step did not work.
 5. Made changes to the way the third step is run to get it to work.
