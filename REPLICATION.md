@@ -123,19 +123,28 @@ and/or
 - [SUGGESTED] We suggest you update the openICPSR metadata fields marked as (suggested), in order to improve findability of your data and code supplement. 
 
 For additional guidance, see [https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html](https://aeadataeditor.github.io/aea-de-guidance/data-deposit-aea-guidance.html).
-> **I would recommend both the last [REQUIRED] and [SUGGESTED] sections.**
+> **I would recommend both the [REQUIRED] and [SUGGESTED] sections.**
 
 Data checks
 -----------
 
 > INSTRUCTIONS: When data are present, run checks:
 > - can data be read (using software indicated by author)?
+  + Yes, .dta file can be read.
 > - Is data in archive-ready formats (CSV, TXT) or in custom formats (DTA, SAS7BDAT, Rdata)? Note: Numbers and Mathematica data files are not considered archive-safe and cannot be accepted. 
     + In custom formats
 > - Does the data have variable labels (Stata: run `describe using (name of DTA)` and check that there is content in the column "variable label")?
     + Yes it has variable labels
 > - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results. Note: this check will have lots of false positives - fields it thinks might be sensitive that are not, in fact, sensitive. Apply judgement.
 
+ #### Results from PII scan
+ > Consider the following table of result:
+ file | var | varlabel |most freq value	| unique values	|total obs	|first reason| flagged|	samp1|	samp2 |	samp3 |	samp4 |	samp5 
+ -----|-----|----------|----------------|---------------|-----------|------------|--------|------|--------|-------|-------|------
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta|gender |gender	| M	|2|	1447312|	search term gender found in gender (label = gender)|	M	| F |   |   |   
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta	| reg_nascita	| place of birth - regions (28)	| 13	| 28	| 1447312 |	search term birth found in reg_nascita (label = place of birth - regions (28))	| 28	| 27 | 26 |	25 |	24
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta |	occupation	apprentice, blue collar, white collar, manager	|white collar|	3	|1447312	|occupation (label = apprentice, blue collar, white collar, manager) has length > 3|	white collar	| manager |	blue collar	|   |  
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta	| industry_3m	manufacturing, construction, services	manufacturing	| 3	| 1447312	| i
 
 Code description
 ----------------
