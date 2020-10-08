@@ -138,27 +138,184 @@ Data checks
 > - Run check for PII ([PII_stata_scan.do](PII_stata_scan.do), sourced from [here](https://github.com/J-PAL/stata_PII_scan) if using Stata) and report results. Note: this check will have lots of false positives - fields it thinks might be sensitive that are not, in fact, sensitive. Apply judgement.
 
  #### Results from PII scan
- > Consider the following table of result:
- ```
- \begin{center}
- \begin{tabular}{ | c | c | c | c | c | c | c | c | c | c | c | c | c | }
- \hline
- file & var & varlabel & most freq value	& unique values	& total obs	& first reason & flagged &	samp1 &	samp2  & 	samp3 & 	samp4 &	samp5\\ 
- \hline\hline
- D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta & gender & gender & M & 2 &	1447312 &	search term gender found in gender (label = gender)&	M	& F &   &   &   \\
- \hline
- D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta	& reg_nascita	& place of birth - regions (28)	& 13	& 28	& 1447312 &	search term birth found in reg_nascita (label = place of birth - regions (28))	& 28	& 27 & 26 &	25 &	24\\
- \hline
- D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta &	occupation	apprentice, blue collar, white collar, manager	& white collar &	3	& 1447312	& occupation (label = apprentice, blue collar, white collar, manager) has length > 3 &	white collar	& manager &	blue collar	&   &  \\
- \hline
- D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta	& industry_3m	manufacturing, construction, services	manufacturing	& 3	& 1447312	& i &  &   &  &  &\\
- \hline
- \end{tabular}
- \end{center}
-```
+ > Consider the following table of result: 
+
+ file | var | varlabel | most freq value	| unique values	| total obs	| first reason | flagged |	samp1 |	samp2  | 	samp3 | samp4 |	samp5 
+ -----|-----|----------|------------------|---------------|-----------|--------------|---------|--------|--------|--------|-------|-------
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta | gender | gender | M | 2 | 1447312 | search term gender found in gender (label = gender) | M | F |   |   |   |
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta | reg_nascita | place of birth - regions (28) | 13	| 28 | 1447312 | search term birth found in reg_nascita (label = place of birth - regions (28))	| 28	| 27 | 26 |	25 |	24  |
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta | occupation	| apprentice, blue collar, white collar, manager | white collar | 3	| 1447312	| occupation (label = apprentice, blue collar, white collar, manager) has length > 3 | white collar | manager | blue collar |  |  
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta | industry_3m | manufacturing, construction, services	| manufacturing	| 3	| 1447312	| i |  |   |  |  |  |
+
 Code description
 ----------------
 > INSTRUCTIONS: Review the code (but do not run it yet). Identify programs that create "analysis files" ("data preparation code"). Identify programs that create tables and figures. Not every deposit will have separate programs for this.
+#### Data Preparation Code
+```
+use "migration_final.dta", clear
+
+**** FINAL SAMPLE SELECTION - TAKE THOSE NORN IN SOUTH AND START WORKING IN SOUTH
+keep if born=="S"
+keep if first_job=="S"
+bysort id:egen n_obs=count(id)
+drop if n_obs == 1
+label variable n_obs "no. of observations for individual"
+
+* CREATE INDICATORS FOR MIGRANTS, NON-MIGRANTS, RETURN MIGRANTS
+
+gen migrant=(work=="N")
+label variable migrant "1 if working in North"
+bysort id: egen max_migrant=max(migrant)
+label variable max_migrant "1 if ever worked in North in sample"
+
+bysort id (year sdate):gen r=(work=="S" & work[_n-1]=="N")
+bysort id: egen max_returnee=max(r)
+label variable max_returnee "1 if ever worked in South after having worked in North in sample"
+* Old code defined return migrant "returnee"
+gen return_migrant = (r==1)
+bysort id (year sdate):replace return_migrant = return_migrant[_n-1] if return_migrant[_n-1]==1
+label variable return_migrant "1 if working/worked in South, but worked in North previously (in sample)"
+
+***
+drop r born deflator_weekly_wage deflator_s_wage weekly_wage s_wage full_year n_obs
+gen female = 0
+replace female=1 if gender=="F"
+tab year, gen(d_year)
+
+iis id
+tis year
+
+*** Generate dummy variables if one of the move variables is zero, allowing a discontinuity there
+gen moves_ai_1d0 = (moves_ai_1d==0)
+gen moves_avg0 = (moves_avg==0)
+gen moves_ar0 = (moves_ar==0)
+
+gen moves_ar2=moves_ar*moves_ar
+gen moves_ai_1d2=moves_ai_1d*moves_ai_1d
+gen moves_avg2=moves_avg*moves_avg
+drop migrant
+compress
+
+save "migration_sample.dta", replace
+```
+#### Tables and Figures
+```
+/****************************************************************/
+/* Table 1 descriptive statistics ***/
+/****************************************************************/
+
+by work, sort: sum pot_exp tenure ten_north d_occ1 d_occ2 d_occ3 ptime multi_firm moves_avg  moves_ai_1d0 lnwage lnincome if female!=1
+
+
+/****************************************************************/
+/* Table 2 (Males, with returnees, for wages) ***/
+/****************************************************************/
+
+do "heckmanfe_std.do"
+keep if female!=1
+drop d_year1 d_year20
+heckmanfe lnwage ptime tenure ten_trk d_occ1 d_occ3 pot_exp pot_exp2 tenure2  multi_firm  ten_north ten_north2 d_y*,  selection(d  ptime  tenure  tenure2 ten_trk ten_north ten_north2  d_occ1 d_occ3 pot_exp pot_exp2 multi_firm  moves_avg  moves_ai_1d0 d_y*)
+
+
+/****************************************************************/
+/* Table 3 (Males, with returnees, for income) **/
+/****************************************************************/
+clear all
+use "migration_sample.dta", clear
+do "heckmanfe_std.do"
+keep if female!=1
+drop d_year1 d_year20
+heckmanfe lnincome ptime tenure ten_trk d_occ1 d_occ3 pot_exp pot_exp2 tenure2  multi_firm  ten_north ten_north2 d_y*,  selection(d  ptime  tenure  tenure2 ten_trk ten_north ten_north2  d_occ1 d_occ3 pot_exp pot_exp2 multi_firm  moves_avg  moves_ai_1d0 d_y*)
+
+
+/****************************************************************/
+/* Table 5 Placebo test    (males for wages and income) **/
+/****************************************************************/
+
+use "migration_sample.dta", clear
+
+keep if max_migrant==0
+keep if female!=1
+keep if returnees==0
+
+set seed 12345
+gen random=runiform()
+sort random
+
+gen placebo=0
+replace placebo=1 if _n/_N<=0.1
+
+replace d=0 if placebo==1
+
+do "heckmanfe_std.do"
+
+drop d_year1 d_year20 
+
+heckmanfe lnwage ptime tenure ten_trk d_occ1 d_occ3 pot_exp pot_exp2 tenure2  multi_firm  d_y*,  selection(d  ptime  tenure  tenure2 ten_trk   d_occ1 d_occ3 pot_exp pot_exp2 multi_firm  moves_avg  moves_ai_1d0 d_y*)
+heckmanfe lnincome ptime tenure ten_trk d_occ1 d_occ3 pot_exp pot_exp2 tenure2  multi_firm  d_y*,  selection(d  ptime  tenure  tenure2 ten_trk   d_occ1 d_occ3 pot_exp pot_exp2 multi_firm  moves_avg  moves_ai_1d0 d_y*)
+
+/****************************************************************/
+/* Table 6: Migration from Northern to South  (males for wages and income) **/
+/****************************************************************/
+
+use "migration_final.dta", clear
+
+/**** TAKE THOSE BORN IN NORTH AND START WORKING IN NORTH *****/
+
+rename tenure_south ten_south
+label variable ten_south "tenure in the firm in the south at start of spell"
+
+gen ten_south2=ten_south*ten_south
+
+keep if born=="N"
+keep if first_job=="N"
+bysort id:egen n_obs_rev=count(id)
+drop if n_obs == 1
+label variable n_obs "no. of observations for individual"
+
+* CREATE INDICATORS FOR MIGRANTS, NON-MIGRANTS, RETURN MIGRANTS
+
+gen migrant=(work=="S")
+label variable migrant "1 if working in South"
+bysort id: egen max_migrant=max(migrant)
+label variable max_migrant "1 if ever worked in South in sample"
+
+bysort id (year sdate):gen r=(work=="N" & work[_n-1]=="S")
+bysort id: egen max_returnee=max(r)
+label variable max_returnee "1 if ever worked in North after having worked in South in sample"
+gen return_migrant = (r==1)
+bysort id (year sdate):replace return_migrant = return_migrant[_n-1] if return_migrant[_n-1]==1
+label variable return_migrant "1 if working/worked in North, but worked in South previously (in sample)"
+
+***
+
+drop r born deflator_weekly_wage deflator_s_wage weekly_wage s_wage n_obs
+gen female = 0
+replace female=1 if gender=="F"
+tab year, gen(d_year)
+
+iis id
+tis year
+
+*** Generate dummy variables if one of the move variables is zero, allowing a discontinuity there
+gen moves_ai_1d0 = (moves_ai_1d==0)
+gen moves_avg0 = (moves_avg==0)
+gen moves_ar0 = (moves_ar==0)
+
+gen moves_ar2=moves_ar*moves_ar
+gen moves_ai_1d2=moves_ai_1d*moves_ai_1d
+gen moves_avg2=moves_avg*moves_avg
+drop migrant
+compress
+
+keep if female!=1
+
+do "heckmanfe_std.do"
+
+drop d_year1 d_year20
+heckmanfe lnwage ptime tenure ten_trk d_occ1 d_occ3 pot_exp pot_exp2 tenure2  multi_firm  ten_south ten_south2 d_y*,  selection(d  ptime  tenure  tenure2 ten_trk ten_south ten_south2  d_occ1 d_occ3 pot_exp pot_exp2 multi_firm  moves_avg  moves_ai_1d0 d_y*)
+heckmanfe lnincome ptime tenure ten_trk d_occ1 d_occ3 pot_exp pot_exp2 tenure2  multi_firm  ten_south ten_south2 d_y*,  selection(d  ptime  tenure  tenure2 ten_trk ten_south ten_south2  d_occ1 d_occ3 pot_exp pot_exp2 multi_firm  moves_avg  moves_ai_1d0 d_y*)
+```
 
 > INSTRUCTIONS: Identify all **Figure, Table, and any in-text numbers**. Create a list, mapping each of them to a particular program and line number within the program (use [this template](code-check-TEMPLATE.xlsx)). Commit that list. You will come back to the list in your findings. IN THIS SECTION, point out only a summary description, including of shortcomings. E.g.
 
@@ -168,6 +325,14 @@ There are four provided Stata do files, three Matlab .m files, including a "mast
 - Neither the program codes, nor the README, identify which tables are produced by what program.
 
 > NOTE: In-text numbers that reference numbers in tables do not need to be listed. Only in-text numbers that correspond to no table or figure need to be listed.
+
+#### Figure, Table, and any in-text numbers
+> There are two provided STATA do files known as "heckmanfe_std.do" and "Who Migrates and Why-results April 2017.do" .
+- Could not identify the code that produces any of the figures or graphs within the programs.
+  + **Figures** : None of them, Figure 1, 2, 3, 4, 5, 6 are in the code.
+  + **Tables** : All six tables were reported.
+- No comments for any calculations.
+- Do not understand the .do file heckmanfe_std.do as it is poorly commented. Thus, how do we connect this to utilizing the other .do file that analyzes and produces the results.
 
 Stated Requirements
 ---------------------
