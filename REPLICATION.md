@@ -139,13 +139,23 @@ Data checks
 
  #### Results from PII scan
  > Consider the following table of result:
- file | var | varlabel |most freq value	| unique values	|total obs	|first reason| flagged|	samp1|	samp2 |	samp3 |	samp4 |	samp5 
- -----|-----|----------|----------------|---------------|-----------|------------|--------|------|--------|-------|-------|------
- D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta|gender |gender	| M	|2|	1447312|	search term gender found in gender (label = gender)|	M	| F |   |   |   
- D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta	| reg_nascita	| place of birth - regions (28)	| 13	| 28	| 1447312 |	search term birth found in reg_nascita (label = place of birth - regions (28))	| 28	| 27 | 26 |	25 |	24
- D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta |	occupation	apprentice, blue collar, white collar, manager	|white collar|	3	|1447312	|occupation (label = apprentice, blue collar, white collar, manager) has length > 3|	white collar	| manager |	blue collar	|   |  
- D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta	| industry_3m	manufacturing, construction, services	manufacturing	| 3	| 1447312	| i
-
+ ```
+ \begin{center}
+ \begin{tabular}{ | c | c | c | c | c | c | c | c | c | c | c | c | c | }
+ \hline
+ file & var & varlabel & most freq value	& unique values	& total obs	& first reason & flagged &	samp1 &	samp2  & 	samp3 & 	samp4 &	samp5\\ 
+ \hline\hline
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta & gender & gender & M & 2 &	1447312 &	search term gender found in gender (label = gender)&	M	& F &   &   &   \\
+ \hline
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta	& reg_nascita	& place of birth - regions (28)	& 13	& 28	& 1447312 &	search term birth found in reg_nascita (label = place of birth - regions (28))	& 28	& 27 & 26 &	25 &	24\\
+ \hline
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta &	occupation	apprentice, blue collar, white collar, manager	& white collar &	3	& 1447312	& occupation (label = apprentice, blue collar, white collar, manager) has length > 3 &	white collar	& manager &	blue collar	&   &  \\
+ \hline
+ D:/PhotonUser/My Files/OneDrive/Files/Who Migrates and Why - April 2017.dta	& industry_3m	manufacturing, construction, services	manufacturing	& 3	& 1447312	& i &  &   &  &  &\\
+ \hline
+ \end{tabular}
+ \end{center}
+```
 Code description
 ----------------
 > INSTRUCTIONS: Review the code (but do not run it yet). Identify programs that create "analysis files" ("data preparation code"). Identify programs that create tables and figures. Not every deposit will have separate programs for this.
