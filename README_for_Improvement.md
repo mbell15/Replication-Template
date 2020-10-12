@@ -12,3 +12,5 @@ STATA functions. This will make it easier to translate into another more comfort
 
 One extra thing to note that there might be a mistake made by the authors in line 368 to 371 of the newly commented code. I explained this possibility in great detail in the 
 comments of the code.
+
+See the improved code [here](Heckman_std_commented.do) and the original code [here](heckmanfe_std.do).
